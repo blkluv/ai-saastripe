@@ -4,16 +4,30 @@ import { z } from "zod";
 import { MessageSquare } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
+import { useState } from "react";
+import { ChatCompletionMessage } from "openai/resources/chat/index.mjs";
 
 //Local components
+import { cn } from "@/lib/utils";
 import Heading from "@/components/Heading";
-import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
+import Empty from "@/components/Empty";
+import Loader from "@/components/Loader";
+import UserAvatar from "@/components/User-avatar";
+import BotAvatar from "@/components/Bot-avatar";
+
+//shadcn-ui
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
+
 //constants
 import { formSchema } from "./constants";
+import { useRouter } from "next/navigation";
 
 const ConversationPage = () => {
+  const router = useRouter();
+  const [messages, setMessages] = useState<ChatCompletionMessage[]>([]);
   const form = useForm<z.infer<typeof formSchema>>({
     //resolver는 유효성 검사 라이브러리를 사용할 수 있게 해주는 옵션입니다.
     resolver: zodResolver(formSchema),
@@ -25,7 +39,25 @@ const ConversationPage = () => {
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+    try {
+      const userMessage: ChatCompletionMessage = {
+        role: "user",
+        content: values.prompt,
+      };
+      const newMessages = [...messages, userMessage];
+
+      const response = await axios.post("/api/conversation", {
+        messages: newMessages,
+      });
+
+      setMessages((current) => [...current, userMessage, response.data]);
+      form.reset();
+    } catch (error) {
+      //MK MODAL
+      console.log(error);
+    } finally {
+      router.refresh();
+    }
   };
 
   return (
@@ -68,7 +100,32 @@ const ConversationPage = () => {
             </form>
           </Form>
         </div>
-        <div className="space-y-4 mt-4">Messages Content</div>
+        <div className="space-y-4 mt-4">
+          {isLoading && (
+            <div className="p-8 rounded-lg w-full flex items-center justify-center bg-muted">
+              <Loader />
+            </div>
+          )}
+          {messages.length === 0 && !isLoading && (
+            <Empty label="No conversation started"></Empty>
+          )}
+          <div className="flex flex-col-reverse gap-y-4">
+            {messages.map((message) => (
+              <div
+                key={message.content}
+                className={cn(
+                  "p-8 w-full flex items-start gap-x-8 rounded-lg",
+                  message.role === "user"
+                    ? "bg-white border border-black/10"
+                    : "bg-muted"
+                )}
+              >
+                {message.role === "user" ? <UserAvatar /> : <BotAvatar />}
+                <p className="text-sm">{message.content}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
