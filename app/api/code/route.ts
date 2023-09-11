@@ -27,7 +27,7 @@ export async function POST(req: Request) {
     });
     return NextResponse.json(chatCompletion.choices[0].message);
   } catch (error) {
-    console.log("[CONVERSATION_ERROR]", error);
+    console.log("[CODE_GENERATION_ERROR]", error);
     return new NextResponse("Internal error", { status: 500 });
   }
 }
