@@ -8,12 +8,9 @@ import axios from "axios";
 import { useState } from "react";
 
 //Local components
-import { cn } from "@/lib/utils";
 import Heading from "@/components/Heading";
 import Empty from "@/components/Empty";
 import Loader from "@/components/Loader";
-import UserAvatar from "@/components/User-avatar";
-import BotAvatar from "@/components/Bot-avatar";
 
 //shadcn-ui
 import { Input } from "@/components/ui/input";
