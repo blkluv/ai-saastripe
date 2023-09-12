@@ -1,6 +1,5 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import {
   Code,
   ImageIcon,
@@ -14,6 +13,9 @@ import { Montserrat } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+
+import { cn } from "@/lib/utils";
+import FreeCounter from "@/components/Free-counter";
 
 const montserrat = Montserrat({ weight: "600", subsets: ["latin"] });
 
@@ -61,7 +63,11 @@ const routes = [
   },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({
+  apiLimitCount = 0,
+}: {
+  apiLimitCount: number;
+}) {
   const pathname = usePathname();
   return (
     <div className="space-y-4 py-4 flex flex-col h-full bg-[#111827] text-white">
@@ -94,6 +100,7 @@ export default function Sidebar() {
           ))}
         </div>
       </div>
+      <FreeCounter apiLimitCount={apiLimitCount} />
     </div>
   );
 }
