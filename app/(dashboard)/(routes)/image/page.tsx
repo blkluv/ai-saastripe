@@ -31,7 +31,11 @@ import { amountOptions, formSchema, resolutionOptions } from "./constants";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
+//zustand
+import { useProModal } from "@/hooks/use-pro-modal";
+
 const ImagePage = () => {
+  const proModal = useProModal();
   const router = useRouter();
   const [images, setImages] = useState<string[]>([]);
 
@@ -55,9 +59,10 @@ const ImagePage = () => {
 
       setImages((old) => [...old, ...urls]);
       form.reset();
-    } catch (error) {
-      //MK MODAL
-      console.log(error);
+    } catch (error: any) {
+      if (error?.response?.status === 403) {
+        proModal.onOpen();
+      }
     } finally {
       router.refresh();
     }
