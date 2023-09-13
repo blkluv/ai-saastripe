@@ -23,6 +23,7 @@ import {
   Zap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 const tools = [
   {
@@ -60,6 +61,8 @@ const tools = [
 const ProModal = () => {
   //zustand
   const proModal = useProModal();
+
+  const router = useRouter();
   return (
     <Dialog open={proModal.isOpen} onOpenChange={proModal.onClose}>
       <DialogContent>
@@ -90,7 +93,15 @@ const ProModal = () => {
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button size={"lg"} variant={"premium"} className="w-full">
+          <Button
+            onClick={() => {
+              proModal.onClose();
+              router.push("checkout");
+            }}
+            size={"lg"}
+            variant={"premium"}
+            className="w-full"
+          >
             Upgrade
             <Zap className="w-4 h-4 ml-2 fill-white" />
           </Button>
