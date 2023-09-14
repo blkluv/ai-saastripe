@@ -105,8 +105,8 @@ export default function Home() {
                 orderName: "AI-SAAS",
                 customerName: "CUSTOMER",
                 customerEmail: "customer123@gmail.com",
-                successUrl: `${window.location.origin}/success`,
-                failUrl: `${window.location.origin}/fail`,
+                successUrl: `${window.location.origin}/checkout/success`,
+                failUrl: `${window.location.origin}/checkout/fail`,
               });
             } catch (error) {
               // 에러 처리하기
